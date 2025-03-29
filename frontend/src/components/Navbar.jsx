@@ -6,7 +6,7 @@ import { useWallet } from "../contexts/walletContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false); // Fixed: Added state for profile dropdown
+  const [profileOpen, setProfileOpen] = useState(false);
   const { account, isConnected, connectWallet, handleDisconnect, error } = useWallet();
 
   const navItems = [
@@ -23,22 +23,22 @@ export default function Navbar() {
           🎟️ TicketChain
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-6">
-          {navItems.map((item, index) => (
-            <Link key={index} to={item.path} className="hover:text-blue-400 transition-all">
-              {item.name}
-            </Link>
-          ))}
-        </div>
+        {/* Right Section: Navbar Items + Wallet + Profile Icon */}
+        <div className="flex items-center space-x-4">
+          {/* Desktop Menu Moved to Left */}
+          <div className="hidden md:flex space-x-4">
+            {navItems.map((item, index) => (
+              <Link key={index} to={item.path} className="hover:text-blue-400 transition-all">
+                {item.name}
+              </Link>
+            ))}
+          </div>
 
-        {/* Right Section: Wallet + Profile Icon */}
-        <div className="flex items-center space-x-6">
           {/* Connect Wallet Button */}
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className={`hidden md:block px-5 py-2 rounded-xl shadow-lg transition-all ${
+            className={`px-4 py-2 rounded-xl shadow-lg transition-all ${
               isConnected ? 'bg-green-600 hover:bg-green-500' : 'bg-blue-500 hover:bg-blue-400'
             }`}
             onClick={isConnected ? handleDisconnect : connectWallet}
