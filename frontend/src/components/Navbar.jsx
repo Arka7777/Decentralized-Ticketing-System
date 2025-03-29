@@ -14,6 +14,8 @@ export default function Navbar() {
   const [contract, setContract] = useState(null);
   const { account, isConnected, connectWallet, handleDisconnect, error } = useWallet();
 
+  
+
   return (
     <nav className="bg-black text-white px-6 py-4 fixed w-full top-0 z-50 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">

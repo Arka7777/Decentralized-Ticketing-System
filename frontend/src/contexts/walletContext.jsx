@@ -22,6 +22,7 @@ export const WalletProvider = ({ children }) => {
 
       const provider = new ethers.BrowserProvider(window.ethereum);
       const accounts = await provider.send("eth_requestAccounts", []);
+      console.log((await provider.getSigner()).getAddress())
 
       if (accounts.length === 0) {
         throw new Error("No accounts found");
