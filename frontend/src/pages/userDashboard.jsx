@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wallet, Calendar, Ticket, TrendingUp, Bell, LogOut, User } from "lucide-react";
+import { Wallet, Calendar, Ticket, TrendingUp, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { motion } from "framer-motion";
@@ -21,25 +21,7 @@ export default function UserDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8">
-      {/* Header */}
-      <motion.div 
-        className="flex justify-between items-center mb-6 bg-black/50 backdrop-blur-lg p-4 rounded-xl shadow-lg"
-        initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-3xl font-bold">🎭 User Dashboard</h1>
-        <div className="flex items-center space-x-4">
-          <Link to="/profile">
-            <motion.div whileHover={{ scale: 1.1 }} className="p-2 bg-gray-700 rounded-full cursor-pointer">
-              <User size={24} />
-            </motion.div>
-          </Link>
-          <button className="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 flex items-center">
-            <LogOut size={20} className="mr-2" /> Logout
-          </button>
-        </div>
-      </motion.div>
-
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8 pt-25">
       {/* Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Wallet Balance */}
