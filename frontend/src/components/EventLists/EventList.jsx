@@ -66,7 +66,7 @@ export default function EventList() {
                     whileTap={{ scale: 0.95 }}
                     className="mt-5 w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white font-medium py-3 rounded-lg hover:opacity-90 transition-all duration-300 shadow-lg"
                   >
-                    🚀 Book Now
+                    🚀 Explore
                   </motion.button>
                 </div>
               </Link>

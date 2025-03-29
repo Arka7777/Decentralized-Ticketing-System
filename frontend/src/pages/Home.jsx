@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import EventCard from "../components/EventCard";
+import EventCard from "../components/EventCard.jsx";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Ticket, Calendar, Star, Users } from "lucide-react";
@@ -85,6 +85,10 @@ export default function Home() {
           {events.slice(0, 3).map((event) => (
             <EventCard key={event.eventId} event={event} />
           ))}
+          {/* Additional Event Cards for Past, Ongoing, and Upcoming Events */}
+          <EventCard event={{ eventId: "past1", title: "🎭 Past Event: Music Fest", date: "March 10, 2025", status: "Past", image: "https://th.bing.com/th/id/OIP.uoPbBSz8YFLw52nzSzUwcgHaE7?rs=1&pid=ImgDetMain", bgColor: "bg-gray-800" }} />
+          <EventCard event={{ eventId: "ongoing1", title: "🔥 Ongoing Event: Tech Summit", date: "March 29, 2025", status: "Ongoing", image: "https://th.bing.com/th/id/OIP.uoPbBSz8YFLw52nzSzUwcgHaE7?rs=1&pid=ImgDetMain", bgColor: "bg-blue-800" }} />
+          <EventCard event={{ eventId: "upcoming1", title: "🚀 Upcoming Event: Startup Expo", date: "April 15, 2025", status: "Upcoming", image: "https://th.bing.com/th/id/OIP.uoPbBSz8YFLw52nzSzUwcgHaE7?rs=1&pid=ImgDetMain", bgColor: "bg-purple-800" }} />
         </div>
       </section>
 
