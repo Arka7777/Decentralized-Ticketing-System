@@ -5,12 +5,13 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Ticket, Calendar, Star, Users } from "lucide-react";
 
+
 export default function Home() {
   const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    axios.get("http://localhost:5000/events").then((res) => setEvents(res.data));
-  }, []);
+ 
+  // useEffect(() => {
+  //   axios.get("http://localhost:5000/events").then((res) => setEvents(res.data));
+  // }, []);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
