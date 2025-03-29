@@ -1,9 +1,18 @@
-import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import CreateEvent from "./pages/CreateEvent";
+import BookTicket from "./pages/BookTicket";
 
-const App = () => {
+export default function App() {
   return (
-    <div className='text-blue-500 text-[50px]'>App</div>
-  )
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create-event" element={<CreateEvent />} />
+        <Route path="/book-ticket" element={<BookTicket />} />
+      </Routes>
+    </Router>
+  );
 }
-
-export default App
