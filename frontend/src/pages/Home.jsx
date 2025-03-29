@@ -5,18 +5,23 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Ticket, Calendar, Star, Users } from "lucide-react";
 
+
 export default function Home() {
   const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    axios.get("http://localhost:5000/events").then((res) => setEvents(res.data));
-  }, []);
+ 
+  // useEffect(() => {
+  //   axios.get("http://localhost:5000/events").then((res) => setEvents(res.data));
+  // }, []);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
-      <header className="relative flex flex-col justify-center items-center h-[80vh] text-center px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-800 via-gray-900 to-blue-900 opacity-90 z-0"></div>
+      <header className="relative flex flex-col justify-center items-center h-screen text-center px-6 overflow-hidden">
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-purple-800 via-gray-900 to-blue-900 opacity-90 z-0"
+          animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        ></motion.div>
 
         <motion.h1 
           className="text-6xl font-extrabold tracking-tight mb-4 relative z-10 text-white"
