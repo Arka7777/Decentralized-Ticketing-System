@@ -1,4 +1,4 @@
-//nothing
+
 
 
 
@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function EventCard({ event }) {
   return (
     <motion.div 
-      className={`p-6 rounded-xl shadow-lg ${event.bgColor || 'bg-gray-800'}`} 
+      className={`p-6 rounded-xl shadow-lg ${event.bgColor || 'bg-blue-800'}`} 
       whileHover={{ scale: 1.05 }}
     >
       <img src={event.image} alt={event.title} className="w-full h-48 object-cover rounded-lg mb-4" />
