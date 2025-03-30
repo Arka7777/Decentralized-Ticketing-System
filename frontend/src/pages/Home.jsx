@@ -17,44 +17,216 @@ export default function Home() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
       <header className="relative flex flex-col justify-center items-center h-screen text-center px-6 overflow-hidden">
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-purple-800 via-gray-900 to-blue-900 opacity-90 z-0"
-          animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-        ></motion.div>
+  {/* Cosmic Animated Background */}
+  <div className="absolute inset-0 overflow-hidden z-0">
+    {/* Base Cosmic Gradient */}
+    <motion.div 
+      className="absolute inset-0"
+      style={{
+        background: `
+          radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.3) 0%, transparent 40%),
+          radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.3) 0%, transparent 40%),
+          linear-gradient(to bottom right, #0f172a, #1e1b4b, #0c0a2e)
+        `
+      }}
+      animate={{
+        backgroundPosition: [
+          "0% 0%", 
+          "100% 50%", 
+          "50% 100%"
+        ]
+      }}
+      transition={{
+        duration: 30,
+        repeat: Infinity,
+        ease: "linear"
+      }}
+    />
+    
+    {/* Animated Nebula Particles */}
+    <div className="absolute inset-0">
+      {[...Array(50)].map((_, i) => {
+        const size = Math.random() * 8 + 2;
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * 5;
+        const color = `hsla(${Math.random() * 60 + 200}, 80%, 70%, ${Math.random() * 0.3 + 0.1})`;
+        
+        return (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute rounded-full blur-[1px]"
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              backgroundColor: color,
+              boxShadow: `0 0 ${size * 3}px ${size}px ${color}`
+            }}
+            animate={{
+              x: [0, (Math.random() - 0.5) * 200],
+              y: [0, (Math.random() - 0.5) * 200],
+              opacity: [0, 0.8, 0]
+            }}
+            transition={{
+              duration,
+              delay,
+              repeat: Infinity,
+              repeatDelay: Math.random() * 5,
+              ease: "easeInOut"
+            }}
+          />
+        );
+      })}
+    </div>
+    
+    {/* Floating Binary Code Matrix Effect */}
+    <div className="absolute inset-0 overflow-hidden">
+      {[...Array(20)].map((_, i) => {
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        const length = Math.floor(Math.random() * 10) + 5;
+        const binaryText = Array(length).fill(0).map(() => Math.random() > 0.5 ? '1' : '0').join(' ');
+        
+        return (
+          <motion.div
+            key={`binary-${i}`}
+            className="absolute text-green-400/30 font-mono text-xs tracking-widest whitespace-nowrap"
+            style={{
+              left: `${Math.random() * 100}%`,
+              writingMode: Math.random() > 0.5 ? 'vertical-rl' : 'horizontal-tb'
+            }}
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: window.innerHeight + 100, opacity: [0, 0.3, 0] }}
+            transition={{
+              duration,
+              delay,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            {binaryText}
+          </motion.div>
+        );
+      })}
+    </div>
+    
+    {/* Dynamic Light Beams */}
+    {[...Array(3)].map((_, i) => {
+      const angle = Math.random() * 360;
+      const duration = Math.random() * 20 + 20;
+      const delay = Math.random() * 5;
+      
+      return (
+        <motion.div
+          key={`beam-${i}`}
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent"
+          style={{
+            transform: `rotate(${angle}deg)`,
+            maskImage: 'linear-gradient(90deg, transparent, white 20%, white 80%, transparent)'
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.1, 0] }}
+          transition={{
+            duration,
+            delay,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      );
+    })}
+    
+    {/* Interactive Floating Orbs (responds to mouse) */}
+    <motion.div 
+      className="absolute w-40 h-40 rounded-full blur-xl"
+      style={{
+        background: 'radial-gradient(circle, rgba(96, 165, 250, 0.4) 0%, transparent 70%)',
+        left: '30%',
+        top: '40%'
+      }}
+      animate={{
+        x: [0, 20, 0, -20, 0],
+        y: [0, 15, 0, -15, 0]
+      }}
+      transition={{
+        duration: 15,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+    
+    <motion.div 
+      className="absolute w-60 h-60 rounded-full blur-xl"
+      style={{
+        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)',
+        right: '20%',
+        bottom: '30%'
+      }}
+      animate={{
+        x: [0, -30, 0, 30, 0],
+        y: [0, -20, 0, 20, 0]
+      }}
+      transition={{
+        duration: 20,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+  </div>
 
-        <motion.h1 
-          className="text-6xl font-extrabold tracking-tight mb-4 relative z-10 text-white"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          The Future of <span className="text-blue-400">Event Ticketing</span>
-        </motion.h1>
+  {/* Content with enhanced effects */}
+  <motion.div className="relative z-10">
+    <motion.h1 
+      className="text-6xl md:text-8xl font-extrabold tracking-tight mb-6 text-white"
+      initial={{ opacity: 0, y: -40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+        The Future
+      </span>
+      <br />
+      <span className="text-white">of Event Ticketing</span>
+    </motion.h1>
 
-        <motion.p 
-          className="text-lg text-gray-300 max-w-xl relative z-10"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 1 }}
-        >
-          Securely buy, sell, and trade tickets using blockchain technology.
-        </motion.p>
+    <motion.p 
+      className="text-xl text-gray-300 max-w-2xl mb-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+    >
+      Securely buy, sell, and trade tickets using <span className="text-blue-300">blockchain technology</span> with zero fees.
+    </motion.p>
 
-        <motion.div 
-          className="mt-6 space-x-6 flex relative z-10"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-        >
-          <Link to="/create-event" className="bg-blue-600 hover:bg-blue-400 text-white px-6 py-3 rounded-xl shadow-lg transition-all">
-            🎟️ Create Event
-          </Link>
-          <Link to="/book-ticket" className="bg-white text-black px-6 py-3 rounded-xl shadow-lg hover:bg-gray-200 transition-all">
-            📅 Book Ticket
-          </Link>
-        </motion.div>
-      </header>
+    <motion.div 
+      className="flex flex-col sm:flex-row gap-4 justify-center"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.6, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <Link 
+        to="/create-event" 
+        className="relative overflow-hidden group bg-gradient-to-br from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+      >
+        <span className="relative z-10 flex items-center justify-center gap-2">
+          🎟️ Create Event
+        </span>
+        <span className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </Link>
+      
+      <Link 
+        to="/book-ticket" 
+        className="relative overflow-hidden group bg-white/90 text-black px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+      >
+        <span className="relative z-10 flex items-center justify-center gap-2">
+          📅 Book Ticket
+        </span>
+        <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </Link>
+    </motion.div>
+  </motion.div>
+</header>
 
       {/* Stats Section */}
       <section className="py-16 px-8 text-center bg-gray-800">
