@@ -41,7 +41,7 @@ export default function CreateEvent() {
       const contract = new ethers.Contract(ContractAddress, ABI, signer);
 
       const priceInWei = ethers.parseEther(ticketPrice);
-      
+      console.log(contract.occasions);
       const tx = await contract.list(
         name,
         priceInWei,

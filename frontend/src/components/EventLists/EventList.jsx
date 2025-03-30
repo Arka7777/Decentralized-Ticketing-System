@@ -1,9 +1,57 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import events from "../EventLists/Events";
+import { ethers } from "ethers";
+import { ABI } from "../../contracts/ABI";
+import { ContractAddress } from "../../contracts/ContractAddress";
 import { Calendar, Ticket } from "lucide-react";
 
 export default function EventList() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  async function fetchEvents() {
+    try {
+      if (!window.ethereum) {
+        alert("🦊 MetaMask not detected! Please install MetaMask.");
+        return;
+      }
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const contract = new ethers.Contract(ContractAddress, ABI, provider);
+
+      const totalOccasions = await contract.totalOccasions();
+      const makeBooking = async (id,seat) =>{
+        await contract.mint(id,seat);
+      }
+      let eventsArray = [];
+
+      for (let i = 1; i <= totalOccasions; i++) {
+        const event = await contract.getOccasion(i);
+        eventsArray.push({
+          id: Number(event.id),
+          name: event.name,
+          cost: ethers.formatEther(event.cost), // Convert from Wei to ETH
+          tickets: Number(event.tickets),
+          maxTickets: Number(event.maxTickets),
+          date: event.date,
+          time: event.time,
+          location: event.location,
+        });
+      }
+
+      setEvents(eventsArray);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Header with Animated Gradient Background */}
@@ -29,50 +77,57 @@ export default function EventList() {
 
       {/* Events Grid */}
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {events.map((event) => (
-            <motion.div 
-              key={event.id} 
-              whileHover={{ scale: 1.08 }}
-              className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-lg border border-gray-800 transition-all duration-300 hover:shadow-2xl hover:border-blue-500 hover:shadow-blue-500/50 hover:backdrop-blur-xl backdrop-filter backdrop-blur-lg"
-            >
-              <Link to={`/event/${event.id}`} className="block">
-                {/* Parallax Image Effect */}
-                <div className="relative overflow-hidden">
-                  <motion.img 
-                    src={event.image} 
-                    alt={event.title} 
-                    className="w-full h-60 object-cover rounded-t-2xl transition-transform duration-500"
-                    whileHover={{ scale: 1.1 }}
-                  />
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs px-4 py-1 rounded-full shadow-md">
-                    {event.date}
+        {loading ? (
+          <p className="text-gray-400 text-center">Loading events...</p>
+        ) : events.length === 0 ? (
+          <p className="text-gray-400 text-center">No events found.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {events.map((event) => (
+              <motion.div 
+                key={event.id} 
+                whileHover={{ scale: 1.08 }}
+                className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-lg border border-gray-800 transition-all duration-300 hover:shadow-2xl hover:border-blue-500 hover:shadow-blue-500/50 hover:backdrop-blur-xl backdrop-filter backdrop-blur-lg"
+              >
+                <Link to={`/event/${event.id}`} className="block">
+                  {/* Parallax Effect (Placeholder Image) */}
+                  <div className="relative overflow-hidden">
+                    <motion.img 
+                      src="https://via.placeholder.com/500" // You can replace this with actual images later
+                      alt={event.name} 
+                      className="w-full h-60 object-cover rounded-t-2xl transition-transform duration-500"
+                      whileHover={{ scale: 1.1 }}
+                    />
+                    <div className="absolute top-3 right-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs px-4 py-1 rounded-full shadow-md">
+                      {event.date}
+                    </div>
                   </div>
-                </div>
 
-                {/* Event Details */}
-                <div className="p-6">
-                  <h3 className="text-3xl font-semibold text-white">{event.title}</h3>
-                  <p className="text-gray-400 flex items-center mt-2">
-                    <Calendar className="w-5 h-5 text-blue-400 mr-2" /> {event.time} | {event.location}
-                  </p>
-                  <p className="text-green-400 font-semibold text-lg flex items-center mt-2">
-                    <Ticket className="w-5 h-5 text-green-400 mr-2" /> ${event.price}
-                  </p>
+                  {/* Event Details */}
+                  <div className="p-6">
+                    <h3 className="text-3xl font-semibold text-white">{event.name}</h3>
+                    <p className="text-gray-400 flex items-center mt-2">
+                      <Calendar className="w-5 h-5 text-blue-400 mr-2" /> {event.time} | {event.location}
+                    </p>
+                    <p className="text-gray-400">🎟 {event.tickets}/{event.maxTickets} tickets left</p>
+                    <p className="text-green-400 font-semibold text-lg flex items-center mt-2">
+                      <Ticket className="w-5 h-5 text-green-400 mr-2" /> {event.cost} ETH
+                    </p>
 
-                  {/* Floating Animated Button */}
-                  <motion.button 
-                    whileHover={{ scale: 1.1, boxShadow: "0px 0px 20px rgba(0, 255, 255, 0.5)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="mt-5 w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white font-medium py-3 rounded-lg hover:opacity-90 transition-all duration-300 shadow-lg"
-                  >
-                    🚀 Explore
-                  </motion.button>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                    {/* Floating Animated Button */}
+                    <motion.button 
+                      whileHover={{ scale: 1.1, boxShadow: "0px 0px 20px rgba(0, 255, 255, 0.5)" }}
+                      whileTap={{ scale: 0.95 }}
+                      className="mt-5 w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white font-medium py-3 rounded-lg hover:opacity-90 transition-all duration-300 shadow-lg"
+                    >
+                      🚀 Book Now
+                    </motion.button>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Call to Action */}
