@@ -1,1 +1,1 @@
-export const ContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with your contract address
+export const ContractAddress = "0xA5cB571fB98Dc76Bd4aB265FaF29E2f53E7b0E50"; // Replace with your contract address

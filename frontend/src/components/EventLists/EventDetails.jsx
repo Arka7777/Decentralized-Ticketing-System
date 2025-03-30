@@ -21,7 +21,7 @@ export default function EventDetails() {
   if (!event) {
     return <div className="text-center text-white py-20">Event not found!</div>;
   }
-
+   
   // Fetch seat data when modal opens
   useEffect(() => {
     const fetchSeats = async () => {
@@ -77,86 +77,109 @@ export default function EventDetails() {
       toast.error("Please select at least one seat");
       return;
     }
-
+  
     setIsBooking(true);
     try {
       // First check if user already has tickets
       const userTickets = await contract.ticketsOwned(event.id, account);
-      if (userTickets.add(selectedSeats.length).gt(5)) {
+  
+      // Ensure `userTickets` is a number
+      const userTicketCount = userTickets?._isBigNumber ? userTickets.toNumber() : Number(userTickets || 0);
+  
+      if (userTicketCount + selectedSeats.length > 5) {
         throw new Error("You can't buy more than 5 tickets for this event");
       }
-
+  
       // Check if seats are still available
       const currentTakenSeats = await contract.getSeatsTaken(event.id);
       const newlyTaken = selectedSeats.filter(seat => 
-        currentTakenSeats.includes(seat)
+        Array.isArray(currentTakenSeats) 
+          ? currentTakenSeats.map(s => Number(s)).includes(seat)
+          : false
       );
-      
+  
       if (newlyTaken.length > 0) {
         throw new Error(`Seat(s) ${newlyTaken.join(', ')} were just taken`);
       }
-
-      const pricePerTicket = ethers.utils.parseEther(event.price.toString());
-      const totalPrice = pricePerTicket.mul(selectedSeats.length);
+  
+      // Ensure event.price is a valid number
+      if (!event.price || isNaN(event.price)) {
+        throw new Error("Invalid event price. Please try again later.");
+      }
       
-      // Call the mint function (or batchMint if you've added it)
-      let tx;
-      if (selectedSeats.length === 1) {
-        tx = await contract.mint(
-          event.id,
-          selectedSeats[0],
-          { value: pricePerTicket }
-        );
-      } else {
-        tx = await contract.batchMint(
-          event.id,
-          selectedSeats,
-          { value: totalPrice }
+      // Fix: Handle price correctly based on ethers version (v5 or v6)
+      let pricePerTicket;
+      try {
+        // Try ethers v6 approach
+        pricePerTicket = ethers.parseEther(event.price.toString());
+      } catch (e) {
+        try {
+          // Fallback to ethers v5 approach
+          pricePerTicket = ethers.utils.parseEther(event.price.toString());
+        } catch (e2) {
+          // If both fail, use string concatenation with 18 zeros (1 ETH = 10^18 wei)
+          const priceInWei = event.price.toString() + "000000000000000000";
+          pricePerTicket = priceInWei;
+        }
+      }
+  
+      // Fix: Since batchMint doesn't exist, we'll mint each ticket individually
+      const txPromises = [];
+      
+      for (const seat of selectedSeats) {
+        const tx = await contract.mint(event.id, seat, { value: pricePerTicket });
+        txPromises.push(tx.wait());
+        
+        // Show notification for each transaction
+        toast.info(
+          <div>
+            <p>Transaction submitted for seat {seat}!</p>
+            <a 
+              href={`https://testnet.snowtrace.io/tx/${tx.hash}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 underline text-sm"
+            >
+              View on Snowtrace
+            </a>
+          </div>,
+          { autoClose: false }
         );
       }
-
-      toast.info(
-        <div>
-          <p>Transaction submitted!</p>
-          <a 
-            href={`https://testnet.snowtrace.io/tx/${tx.hash}`} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-400 underline text-sm"
-          >
-            View on Snowtrace
-          </a>
-        </div>,
-        { autoClose: false }
-      );
-
-      await tx.wait();
-
+      
+      // Wait for all transactions to complete
+      await Promise.all(txPromises);
+  
       toast.success(
         <div>
           <p>Successfully booked {selectedSeats.length} ticket(s)!</p>
           <p className="text-sm">Seats: {selectedSeats.join(', ')}</p>
         </div>
       );
-      
+  
       setShowSeatLayout(false);
       setSelectedSeats([]);
       setOccupiedSeats(prev => [...prev, ...selectedSeats]);
     } catch (err) {
       console.error("Booking failed:", err);
       let errorMessage = err.message;
+  
       if (err.message.includes("insufficient funds")) {
         errorMessage = "Insufficient funds for this transaction";
       } else if (err.message.includes("user rejected transaction")) {
         errorMessage = "Transaction rejected by user";
       } else if (err.message.includes("seat already taken")) {
         errorMessage = "One or more seats were already taken";
+      } else if (err.message.includes("reverted")) {
+        errorMessage = "Transaction reverted - check contract requirements";
       }
+  
       toast.error(errorMessage);
     } finally {
       setIsBooking(false);
     }
   };
+  
 
   // Render cinema-style seat layout
   const renderSeatLayout = () => {
