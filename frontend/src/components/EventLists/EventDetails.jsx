@@ -107,21 +107,9 @@ export default function EventDetails() {
         throw new Error("Invalid event price. Please try again later.");
       }
       
-      // Fix: Handle price correctly based on ethers version (v5 or v6)
-      let pricePerTicket;
-      try {
-        // Try ethers v6 approach
-        pricePerTicket = ethers.parseEther(event.price.toString());
-      } catch (e) {
-        try {
-          // Fallback to ethers v5 approach
-          pricePerTicket = ethers.utils.parseEther(event.price.toString());
-        } catch (e2) {
-          // If both fail, use string concatenation with 18 zeros (1 ETH = 10^18 wei)
-          const priceInWei = event.price.toString() + "000000000000000000";
-          pricePerTicket = priceInWei;
-        }
-      }
+      // Fix: Proper price calculation
+      const pricePerTicket = ethers.utils.parseEther(event.price.toString());
+      const totalPrice = pricePerTicket.mul(selectedSeats.length);
   
       // Fix: Since batchMint doesn't exist, we'll mint each ticket individually
       const txPromises = [];
