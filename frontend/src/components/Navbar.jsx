@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, UserCircle } from "lucide-react";
 import { useWallet } from "../contexts/walletContext";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,8 +16,37 @@ export default function Navbar() {
     { name: "Book Ticket", path: "/book-ticket", icon: "🎟️" }
   ];
 
+  // Handle wallet connection with toast notification
+  const handleConnectWallet = () => {
+    if (!isConnected) {
+      connectWallet();
+      toast.success(" Wallet Connected Successfully!", {
+        duration: 3000,
+        position: "center",
+        style: {
+          background: "blue",
+          color: "#fff",
+          
+        },
+      });
+    } else {
+      handleDisconnect();
+      toast.error(" Wallet Disconnected", {
+        duration: 3000,
+        position: "center",
+        style: {
+          background: "red",
+          color: "#fff",
+        },
+      });
+    }
+  };
+
   return (
     <nav className="fixed top-0 w-full z-50 backdrop-blur-lg bg-black/70 shadow-lg text-white">
+      {/* Toaster for notifications */}
+      <Toaster position="top-right" reverseOrder={false} />
+
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         {/* Logo */}
         <Link to="/" className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
@@ -41,7 +71,7 @@ export default function Navbar() {
             className={`px-4 py-2 rounded-xl shadow-lg transition-all ${
               isConnected ? 'bg-green-600 hover:bg-green-500' : 'bg-blue-500 hover:bg-blue-400'
             }`}
-            onClick={isConnected ? handleDisconnect : connectWallet}
+            onClick={handleConnectWallet}
           >
             {isConnected ? `${account.slice(0, 6)}...${account.slice(-4)}` : "🔗 Connect Wallet"}
           </motion.button>
@@ -106,7 +136,7 @@ export default function Navbar() {
               className={`w-full mt-4 py-2 rounded-lg shadow-lg ${
                 isConnected ? 'bg-green-600 hover:bg-green-500' : 'bg-blue-500 hover:bg-blue-400'
               }`}
-              onClick={isConnected ? handleDisconnect : connectWallet}
+              onClick={handleConnectWallet}
             >
               {isConnected ? `${account.slice(0, 6)}...${account.slice(-4)}` : "🔗 Connect Wallet"}
             </motion.button>

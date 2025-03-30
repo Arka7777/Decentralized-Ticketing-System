@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { ABI } from "../contracts/ABI";
 import { ContractAddress } from "../contracts/ContractAddress";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 export default function CreateEvent() {
   const [name, setName] = useState("");
@@ -41,7 +42,7 @@ export default function CreateEvent() {
       const contract = new ethers.Contract(ContractAddress, ABI, signer);
 
       const priceInWei = ethers.parseEther(ticketPrice);
-      console.log(contract.occasions);
+
       const tx = await contract.list(
         name,
         priceInWei,
@@ -52,14 +53,13 @@ export default function CreateEvent() {
         { gasLimit: 500000 }
       );
 
-      console.log("📡 Transaction sent:", tx.hash);
-      alert(`✅ Transaction submitted! Hash: ${tx.hash}`);
+      toast.loading("📡 Transaction sent, waiting for confirmation...");
 
       const receipt = await tx.wait();
-      console.log("✅ Transaction confirmed:", receipt);
 
       if (receipt.status === 1) {
-        alert("🎉 Event created successfully!");
+        toast.dismiss();
+        toast.success("🎉 Event created successfully!");
         setName("");
         setDate("");
         setTicketPrice("");
@@ -69,8 +69,8 @@ export default function CreateEvent() {
         throw new Error("⚠️ Transaction failed on the blockchain.");
       }
     } catch (error) {
-      console.error("🚨 Transaction error:", error);
-      alert(`❌ Error: ${error.message || "Unknown error occurred."}`);
+      toast.dismiss();
+      toast.error(`❌ ${error.message || "Unknown error occurred."}`);
     } finally {
       setIsLoading(false);
     }
